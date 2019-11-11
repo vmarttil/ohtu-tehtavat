@@ -2,12 +2,12 @@ package ohtu.verkkokauppa;
 
 public interface VarastoInt {
 
-	Tuote haeTuote(int id);
+	TuoteInt haeTuote(int id);
 
 	int saldo(int id);
 
-	void otaVarastosta(Tuote t);
+	void otaVarastosta(TuoteInt t);
 
-	void palautaVarastoon(Tuote t);
+	void palautaVarastoon(TuoteInt t);
 
 }

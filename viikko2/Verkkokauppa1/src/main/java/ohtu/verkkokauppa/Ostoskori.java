@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 public class Ostoskori {
 
-    ArrayList<Tuote> tuotteet;
+    ArrayList<TuoteInt> tuotteet;
 
     public Ostoskori() {
-        tuotteet = new ArrayList<Tuote>();
+        tuotteet = new ArrayList<TuoteInt>();
     }
 
-    public void lisaa(Tuote t) {
+    public void lisaa(TuoteInt t) {
         tuotteet.add(t);
     }
 

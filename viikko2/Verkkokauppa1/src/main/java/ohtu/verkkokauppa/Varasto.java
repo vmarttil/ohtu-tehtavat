@@ -15,17 +15,17 @@ public class Varasto implements VarastoInt {
     }
     
     private KirjanpitoInt kirjanpito;
-    private HashMap<Tuote, Integer> saldot;  
+    private HashMap<TuoteInt, Integer> saldot;  
     
     private Varasto() {
         kirjanpito = Kirjanpito.getInstance();
-        saldot = new HashMap<Tuote, Integer>();
+        saldot = new HashMap<TuoteInt, Integer>();
         alustaTuotteet();
     }
             
     @Override
-	public Tuote haeTuote(int id){
-        for (Tuote t : saldot.keySet()) {
+	public TuoteInt haeTuote(int id){
+        for (TuoteInt t : saldot.keySet()) {
             if ( t.getId()==id) return t;
         }
         
@@ -38,13 +38,13 @@ public class Varasto implements VarastoInt {
     }
     
     @Override
-	public void otaVarastosta(Tuote t){        
+	public void otaVarastosta(TuoteInt t){        
         saldot.put(t,  saldo(t.getId())-1 );
         kirjanpito.lisaaTapahtuma("otettiin varastosta "+t);
     }
     
     @Override
-	public void palautaVarastoon(Tuote t){
+	public void palautaVarastoon(TuoteInt t){
         saldot.put(t,  saldo(t.getId())+1 );
         kirjanpito.lisaaTapahtuma("palautettiin varastoon "+t);
     }    
