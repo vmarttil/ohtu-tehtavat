@@ -17,9 +17,20 @@ public class Main {
         Gson mapper = new Gson();
         Player[] players = mapper.fromJson(bodyText, Player[].class);
         
+        Arrays.sort(players);
         System.out.println("Oliot:");
         for (Player player : players) {
-            System.out.println(player.getName() + " team " + player.getTeam() + " goals " + player.getGoals() + " assists " + player.getAssists());
+            if (player.getNationality().equals("FIN")) {
+                System.out.format("%-25s", player.getName());
+                System.out.print(player.getTeam());
+                System.out.print("  ");
+                System.out.format("%2d", player.getGoals());
+                System.out.print(" + ");
+                System.out.format("%2d", player.getAssists());
+                System.out.print(" = ");
+                System.out.format("%2d", player.getGoals() + player.getAssists());
+                System.out.println();
+            }
         }   
     }
   
