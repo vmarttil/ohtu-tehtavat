@@ -30,6 +30,18 @@ public class Stepdefs {
         element.click();   
     }
     
+    @Given("user with username {string} with password {string} is successfully created")
+    public void userIsSuccessfullyCreated(String username, String password) {
+        newUserIsSelected();
+        createUserWith(username, password);
+    }
+    
+    @Given("user with username {string} and password {string} is tried to be created")
+    public void userIsUnsuccessfullyTriedToBeCreated(String username, String password) {
+        newUserIsSelected();
+        createUserWith(username, password);
+    }
+    
     @When("correct username {string} and password {string} are given")
     public void correctUsernameAndPasswordAreGiven(String username, String password) {
         logInWith(username, password);
@@ -45,6 +57,11 @@ public class Stepdefs {
         logInWith(username, password);
     }
 
+    @When("failed username {string} and password {string} are given")
+    public void failedUsernameAndPasswordAreGiven(String username, String password) {
+        logInWith(username, password);
+    }
+    
     @When("a valid username {string} and password {string} and matching password confirmation are entered")
     public void validUsernameAndPasswordAreEnteredAndConfirmed(String username, String password) {
         createUserWith(username, password);
