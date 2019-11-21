@@ -2,7 +2,15 @@ package ohtu.verkkokauppa;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import ohtu.verkkokauppa.Kauppa;
+import ohtu.verkkokauppa.Pankki;
+import ohtu.verkkokauppa.Viitegeneraattori;
+
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class KauppaTest {
@@ -10,14 +18,14 @@ public class KauppaTest {
 	Pankki pankki;
 	Kauppa k;
 	Varasto varasto;
+	Viitegeneraattori viite;
 	
 	@Before
 	public void SetUp() {
 		// luodaan ensin mock-oliot
         pankki = mock(Pankki.class);
-
-        Viitegeneraattori viite = mock(Viitegeneraattori.class);
-        // määritellään että viitegeneraattori palauttaa viitten 42
+        viite = mock(Viitegeneraattori.class);
+        // määritellään että viitegeneraattori palauttaa viitteen 42
         when(viite.uusi()).thenReturn(42);
 
         varasto = mock(Varasto.class);
@@ -37,9 +45,8 @@ public class KauppaTest {
         k.lisaaKoriin(1);     // ostetaan tuotetta numero 1 eli maitoa
         k.tilimaksu("pekka", "12345");
 
-        // sitten suoritetaan varmistus, että pankin metodia tilisiirto on kutsuttu
+        // sitten suoritetaan varmistus, että pankin metodia tilisiirto on kutsuttu oikeilla arvoilla
         verify(pankki).tilisiirto("pekka", 42, "12345", "33333-44455",5);   
-        // toistaiseksi ei välitetty kutsussa käytetyistä parametreista
     }
     
     @Test
@@ -54,9 +61,8 @@ public class KauppaTest {
         k.lisaaKoriin(2);     // ostetaan tuotetta numero 2 eli leipää
         k.tilimaksu("pekka", "12345");
 
-        // sitten suoritetaan varmistus, että pankin metodia tilisiirto on kutsuttu
+        // sitten suoritetaan varmistus, että pankin metodia tilisiirto on kutsuttu oikeilla arvoilla
         verify(pankki).tilisiirto("pekka", 42, "12345", "33333-44455",8);   
-        // toistaiseksi ei välitetty kutsussa käytetyistä parametreista
     }
     
     @Test
@@ -68,9 +74,8 @@ public class KauppaTest {
         k.lisaaKoriin(1);     // ostetaan lisää tuotetta numero 1 eli maitoa
         k.tilimaksu("jussi", "54321");
 
-        // sitten suoritetaan varmistus, että pankin metodia tilisiirto on kutsuttu
+        // sitten suoritetaan varmistus, että pankin metodia tilisiirto on kutsuttu oikeilla arvoilla
         verify(pankki).tilisiirto("jussi", 42, "54321", "33333-44455",10);   
-        // toistaiseksi ei välitetty kutsussa käytetyistä parametreista
     }
     
     @Test
@@ -85,9 +90,65 @@ public class KauppaTest {
         k.lisaaKoriin(2);     // yritetään ostaa tuotetta 2 eli leipää
         k.tilimaksu("matti", "11223");
 
-        // sitten suoritetaan varmistus, että pankin metodia tilisiirto on kutsuttu
+        // sitten suoritetaan varmistus, että pankin metodia tilisiirto on kutsuttu oikeilla arvoilla
         verify(pankki).tilisiirto("matti", 42, "11223", "33333-44455",5);   
-        // toistaiseksi ei välitetty kutsussa käytetyistä parametreista
     }
+    
+    @Test
+    public void uudenAsioinninAloituksenJalkeenPankinMetodiaTilisiirtoKutsutaan() {        
+        // tehdään ostokset
+        k.aloitaAsiointi();
+        k.lisaaKoriin(1);     // ostetaan tuotetta numero 1 eli maitoa
+        k.lisaaKoriin(1);     // ostetaan lisää tuotetta numero 1 eli maitoa
+        // aloitetaan uusi asiointi
+        k.aloitaAsiointi();
+        k.lisaaKoriin(1);     // ostetaan taas tuotetta numero 1 eli maitoa
+        k.tilimaksu("jussi", "12555");
+        // sitten suoritetaan varmistus, että pankin metodia tilisiirto on kutsuttu oikeilla arvoilla
+        verify(pankki).tilisiirto("jussi", 42, "12555", "33333-44455",5);   
+    }
+    
+    @Test
+    public void pyydetaanUusiViitenumeroJokaiselleMaksutapahtumalle() {
+        // määritellään viitegeneraattori uusiksi niin, että se palauttaa ensimmäisellä kutsukerralla 11, 
+    	// toisella 22 ja kolmannella 33
+        when(viite.uusi()).thenReturn(11).thenReturn(22).thenReturn(33);
+
+        k.aloitaAsiointi();
+        k.lisaaKoriin(1);     // ostetaan tuotetta numero 1 eli maitoa
+        k.tilimaksu("joonas", "12321");
+
+        // varmistetaan, että käytössä on ensimmäisenä pyydetty viite
+        verify(pankki).tilisiirto("joonas", 11, "12321", "33333-44455",5);
+        
+        k.aloitaAsiointi();
+        k.lisaaKoriin(1);     // ostetaan tuotetta numero 1 eli maitoa
+        k.tilimaksu("joonas", "12321");
+
+        // varmistetaan, että nyt käytössä on toisena pyydetty viite
+        verify(pankki).tilisiirto("joonas", 22, "12321", "33333-44455",5);   
+        
+        k.aloitaAsiointi();
+        k.lisaaKoriin(1);     // ostetaan tuotetta numero 1 eli maitoa
+        k.tilimaksu("joonas", "12321");
+
+        // varmistetaan, että nyt käytössä on kolmantena pyydetty viite
+        verify(pankki).tilisiirto("joonas", 33, "12321", "33333-44455",5);           
+    }
+    
+    @Test
+    public void tuotteidenLisaamisenJaPoistamisenJalkeenPankinMetodiaTilisiirtoKutsutaan() {        
+        // tehdään ostoksia
+        k.aloitaAsiointi();
+        k.lisaaKoriin(1);     // ostetaan tuotetta numero 1 eli maitoa
+        k.lisaaKoriin(1);     // ostetaan lisää tuotetta numero 1 eli maitoa
+        k.lisaaKoriin(1);     // ostetaan vielä lisää tuotetta numero 1 eli maitoa
+        k.poistaKorista(1);   // poistetaan korista yksi tuote
+        k.tilimaksu("jussi", "12555");
+        // sitten suoritetaan varmistus, että pankin metodia tilisiirto on kutsuttu oikeilla arvoilla
+        verify(pankki).tilisiirto("jussi", 42, "12555", "33333-44455",10);   
+    }
+    
+    
     
 }
