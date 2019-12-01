@@ -1,1 +1,3 @@
 Tähän tiedostoon tehdän muutoksia ja lisäyksiä jotta saadaan tagattavia committeja.
+
+Lisätään vähän tekstiä, että saadaan aikaan muutos toista committia varten.
