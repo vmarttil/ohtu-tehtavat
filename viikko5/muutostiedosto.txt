@@ -3,3 +3,5 @@ Tähän tiedostoon tehdän muutoksia ja lisäyksiä jotta saadaan tagattavia com
 Lisätään vähän tekstiä, että saadaan aikaan muutos toista committia varten.
 
 Lisätääm vielä vähän tekstiä, että saadaan aikaan uusi muutos kolmatta committia varten.
+
+Tämä lisäys on tehty tehtävää 2 varten.
