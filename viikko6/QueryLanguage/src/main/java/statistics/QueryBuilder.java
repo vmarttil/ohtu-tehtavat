@@ -10,6 +10,7 @@ import statistics.matcher.And;
 import statistics.matcher.HasAtLeast;
 import statistics.matcher.HasFewerThan;
 import statistics.matcher.Matcher;
+import statistics.matcher.Or;
 import statistics.matcher.PlaysIn;
 
 /**
@@ -38,8 +39,15 @@ public class QueryBuilder {
         return this;
     }
     
+    public QueryBuilder oneOf(Matcher... matchers) {
+        this.m = new And(this.m, new Or(matchers));
+        return this;
+    }
+        
     public Matcher build() {
-        return this.m;
+        Matcher result = this.m;
+        this.m = new All();
+        return result;
     }
     
     
